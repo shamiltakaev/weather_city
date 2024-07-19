@@ -16,9 +16,6 @@ def get_weather(city):
     url = f"https://api.open-meteo.com/v1/forecast?latitude={latit}&longitude={longt}&hourly=temperature_2m"
     request = requests.get(url)
 
-    # print(request.json()["hourly"]["temperature_2m"]
-    #     [datetime.datetime.now().hour-1])
-    # print(request.json()["hourly"]["temperature_2m"])
     items = []
     for temp, date in zip(request.json()["hourly"]["temperature_2m"], request.json()["hourly"]["time"]):
         items.append(
@@ -29,17 +26,23 @@ def get_weather(city):
                 )
         # print(datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M").strftime("%d.%m.%Y-%H:%M"), temp)
     return items
-    # d = datetime.datetime.strptime(request.json()["hourly"]["time"][0], "%Y-%m-%dT%H:%M")
-    # print(d.strftime("%d/%m/%Y"))
 
-# get_weather(city)
 
 @app.route('/', methods=["GET", "POST"])
 @app.route('/index', methods=["GET", "POST"])
 def index():
     form = SearchForm()
     items = []
+    now_time = ""
+    import os
+    os.chdir(os.path.abspath(os.path.dirname(__file__)))
+    
+    with open("cities.txt", "r", encoding="utf8") as file:
+        cities = [city.strip() for city in file.readlines()]
+    #     print(file.readlines())
+    # cities = ["C++", "Python", "PHP", "Java", "C", "Ruby", 
+    #                  "R", "C#", "Dart", "Fortran", "Pascal", "Javascript"] 
     if form.validate_on_submit():
         items = get_weather("Аргун")
         now_time = items[datetime.datetime.now().hour]["temp"]
-    return render_template("index.html", items=items, now_time=now_time, form=form)
+    return render_template("index.html", items=items, now_time=now_time, form=form, cities=cities)

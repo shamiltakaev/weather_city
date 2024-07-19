@@ -47,18 +47,18 @@
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
-          {{ form.city_name.label }}
-          {{ form.city_name(size=32) }}
+            {{ form.city_name.label }}
+            {{ form.city_name(size=32, id="tags") }}
         </p>
         <p style="margin-left: 150px;">{{ form.submit() }}</p>
-      </form>
+    </form>
 </div>
 {% if items %}
 <div>
     <table>
         <caption>
             В данный момент {{now_time}}
-          </caption>
+        </caption>
         <thead>
             <tr>
                 <th scope="col">Время</th>
@@ -73,5 +73,20 @@
         {% endfor %}
     </table>
 </div>
+
 {% endif %}
+<script>
+    $(function () {
+        var availableTags = [
+            {% for city in cities %} 
+              "{{city}}",
+        {% endfor %} 
+        ];
+    $("#tags").autocomplete({
+        source: availableTags
+    }); 
+    } 
+    ); 
+</script>
+
 {% endblock %}
